@@ -57,7 +57,7 @@
 
      ...
 
-     SELINUX=disable
+     SELINUX=disabled
 
      ...
 
@@ -71,7 +71,7 @@
 
 2. 配置yum仓库
 
-   curl -sS https://packages.github.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+   curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 
 3. 启动postfix邮件服务
 
@@ -84,7 +84,18 @@
 ##### Omnibus GitLab等相关配置初始化并完成安装
 
 1. 证书创建与配置加载
+
 2. Nginx SSL 代理服务配置
+
 3. 初始化GitLab相关服务并完成安装
+
+   ~~~shell
+   mkdir -p /etc/gitlab/ssl
+   openssl genrsa -out "/etc/gitlab/ssl/gitlab.example.com.key" 2048
+   openssl req -new -key "/etc/gitlab/ssl/gitlab.example.com.key" -out "/etc/gitlab/ssl/gitlab.example.com.csr"
+   openssl x509 -req -days 3650 -in "/etc/gitlab/ssl/gitlab.example.com.csr" -signkey "/etc/gitlab/ssl/gitlab.example.com.key" -out "/etc/gitlab/ssl/gitlab.example.com.crt"
+   openssl dhparam -out /etc/gitlab/ssl/dhparams.pem 2048
+   ~~~
+
 
 
