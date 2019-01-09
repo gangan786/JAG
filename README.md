@@ -495,3 +495,136 @@ Python3.6+Ansible2.5
    [root@localhost ~]# cat test.txt 
    Currently root is logining test.example.com
    ~~~
+
+
+
+
+
+#### 8-Ansible Playbooks常用模块
+
+1. File模块
+
+   在目标主机创建文件或目录，并赋予系统权限
+
+   ~~~yaml
+   - name:create a file
+     file: 'path=/root/foo.txt state=touch mode=0755 owner=foo group=foo'
+   ~~~
+
+   name：定义任务名称，这里的任务名称是create a file
+
+   file：表明调用的是file这个模块
+
+   path：表示文件的具体路径及名称
+
+   state=touch：表示要创建文件
+
+   mode：对这个文件指定权限
+
+   owner=foo：表示文件属于foo用户
+
+   group=foo：表示文件是foo这个属组
+
+2. Copy模块
+
+   实现Ansible服务端到目标主机的文件传送
+
+   ~~~yaml
+   - name:copy a file
+     copy: 'remote_scr=no src=roles/testbox/files/foo.sh dest=/root/foo.sh mode=0644 force=yes'
+   ~~~
+
+   copy：调用copy模块
+
+   remote_src=no：表示将Ansible源主机的文件推送到远程目标主机
+
+   src：源文件路径
+
+   dest：目标主机文件路径
+
+   mode：权限
+
+   force=yes：定义当前这个copy任务强制执行
+
+3. Stat模块
+
+   获取远程文件状态信息，并保存到某个环境变量中供随后使用
+
+   ~~~yaml
+   - name: check if foo.sh exits
+     stat: 'path=/root/foo.sh'
+     register: script_sate
+   ~~~
+
+   stat：调用stat模块
+
+   path：文件路径
+
+   register：将获取到的文件信息赋值给环境变量script_stat
+
+4. Debug模块
+
+   打印语句到Ansible执行输出
+
+   ~~~yaml
+   - debug: msg=foo.sh exits
+     when: script_stat.stat.exists
+   ~~~
+
+   msg：定义输出的语句
+
+   上面这段脚本具体当script_stat所代表的文件存在时就输出语句 “foo.sh exits”
+
+5. Command/Shell模块
+
+   用来执行Linux目标主机命令行
+
+   不同之处在于Shell模块可以调用Linux系统下的bin.bash
+
+   推荐使用shell模块
+
+   ~~~yaml
+   - name: run the script
+     command: "sh /root/foo.sh"
+     
+   - name: run the script
+     shell: "echo 'test' > /root/test.txt"
+   ~~~
+
+6. Template模块
+
+   实现Ansible服务端到目标主机的jinja2模板传送
+
+   ~~~yaml
+   - name: write the nginx config file
+     template: scr=roles/testbox/templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+   ~~~
+
+7. Packaging模块
+
+   调用目标主机系统包管理工具（yum，apt）进行安装
+
+
+
+   CentOS/Redhat系统
+
+   ~~~yaml
+   - name: ensure nginx is at the latest version
+     yum: pkg=nginx state=latest
+   ~~~
+
+   Debain/Ubuntu系统
+
+   ~~~yaml
+   - name: ensure nginx is at the latest version
+     apt: pkg=nginx state=latest
+   ~~~
+
+8. Service模块
+
+   管理目标主机系统服务，通过调用系统的systemctl命令或者server
+
+   ~~~yaml
+   - name: start nginx service
+     service: name=nginx state=started
+   ~~~
