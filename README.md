@@ -628,3 +628,130 @@ Python3.6+Ansible2.5
    - name: start nginx service
      service: name=nginx state=started
    ~~~
+
+
+
+
+
+#### 9-Jenkins安装配置管理
+
+安装Jenkins前的环境准备
+
+1. 添加yum仓库源，下载key验证仓库的安全性
+
+   ~~~shell
+   wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat-stable/jenkins.repo
+   rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+   ~~~
+
+2. 保证系统java版本为8.0或以上
+
+   ~~~shell
+   yum -y install java
+   ~~~
+
+3. 关闭系统防火墙
+
+4. 关闭SELINUX并重启系统
+
+
+
+Jenkins安装与初始化配置
+
+1. Yum源安装Jenkins最新版本
+
+   ~~~shell
+   yum install jenkins -y
+   ~~~
+
+2. 创建Jenkins系统用户
+
+   ~~~shell
+   useradd deploy
+   ~~~
+
+3. 更改Jenkins启动用户与端口
+
+   ~~~shell
+   vi /etc/sysconfig/jenkins 
+   ~~~
+
+   更改如下参数
+
+   ~~~shell
+   JENKINS_USER="deploy"
+   JENKINS_PORT="8080"
+   ~~~
+
+   更改日志属组
+
+   ~~~shell
+   chown -R deploy:deploy /var/lib/jenkins/
+   chown -R deploy:deploy /var/log/jenkins/
+   ~~~
+
+4. 启动Jenkins
+
+   按上述步骤配置好后发现启动失败，查看日志有如下信息
+
+   ~~~
+   一月 11, 2019 11:23:29 上午 winstone.Logger logInternal
+   严重: Container startup failed
+   java.io.FileNotFoundException: /var/cache/jenkins/war/META-INF/MANIFEST.MF (权限不够)
+   	at java.io.FileOutputStream.open0(Native Method)
+   	at java.io.FileOutputStream.open(FileOutputStream.java:270)
+   	at java.io.FileOutputStream.<init>(FileOutputStream.java:213)
+   	at java.io.FileOutputStream.<init>(FileOutputStream.java:162)
+   	at winstone.HostConfiguration.getWebRoot(HostConfiguration.java:278)
+   	at winstone.HostConfiguration.<init>(HostConfiguration.java:81)
+   	at winstone.HostGroup.initHost(HostGroup.java:66)
+   	at winstone.HostGroup.<init>(HostGroup.java:45)
+   	at winstone.Launcher.<init>(Launcher.java:169)
+   	at winstone.Launcher.main(Launcher.java:354)
+   	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+   	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+   	at java.lang.reflect.Method.invoke(Method.java:498)
+   	at Main._main(Main.java:344)
+   	at Main.main(Main.java:160)
+   
+   ~~~
+
+   查看[博客](https://cloudofnines.blogspot.com/2014/09/jenkins-service-failed-to-startup-as.html)，添加如下命令：
+
+   ~~~shell
+   chown -R deploy:deploy /var/cache/jenkins/
+   ~~~
+
+   问题解决，成功启动
+
+
+
+#### 10-Jenkins Job构建配置
+
++ 环境准备
+
+  1. 配置Jenkins server本地GitLab DNS
+
+  2. 安装git client，curl工具依赖
+
+     yum install git curl -y
+
+  3. 关闭Git http.sslVerify安全认证
+
+     git config --system http.sslVerify false
+
+  4. 添加Jenkins后台Git client user与email
+
++ Jenkins Freestyle与Pipeline Job区别
+
+  + Freestyle Job：
+    1. 需在页面添加模块配置项与参数完成配置
+    2. 每个Job仅能实现一个开发功能
+    3. 无法将配置代码化，不利于Job配置迁移与版本控制
+    4. 逻辑相对简单，无需额外的学习成本
+  + Pipeline Job
+    1. 所有模块，参数配置都可以体现为一个pipeline脚本
+    2. 可以定义多个stage构建一个管道工作集
+    3. 所有配置代码化，方便job配置迁移与版本控制
+    4. 需要pipeline语法基础
