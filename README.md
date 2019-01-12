@@ -743,6 +743,8 @@ Jenkins安装与初始化配置
 
   4. 添加Jenkins后台Git client user与email
 
+  5. 添加Jenkins后台Git Credential凭据
+
 + Jenkins Freestyle与Pipeline Job区别
 
   + Freestyle Job：
@@ -755,3 +757,18 @@ Jenkins安装与初始化配置
     2. 可以定义多个stage构建一个管道工作集
     3. 所有配置代码化，方便job配置迁移与版本控制
     4. 需要pipeline语法基础
+
+
+
+#### 11-Jenkins Pipeline Job编写规范
+
+![Pipeline1](https://github.com/gangan786/JAG/blob/master/Image/Pipeline1.png?raw=true)
+
+![2](https://github.com/gangan786/JAG/blob/master/Image/Pipeline2.png?raw=true)
+
+![3](https://github.com/gangan786/JAG/blob/master/Image/Pipeline3.png?raw=true)
+
+![4](https://github.com/gangan786/JAG/blob/master/Image/Pipeline4.png?raw=true)
+
+![5](https://github.com/gangan786/JAG/blob/master/Image/Pipeline5.png?raw=true)
+
