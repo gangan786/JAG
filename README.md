@@ -772,3 +772,70 @@ Jenkins安装与初始化配置
 
 ![5](https://github.com/gangan786/JAG/blob/master/Image/Pipeline5.png?raw=true)
 
+
+
+
+
+#### 12-Jenkins应用
+
+1. JenKins Linux shell集成
+
+   构建时选择执行shell，以下是测试脚本
+
+   ~~~shell
+   #!/bin/sh
+   
+   user=`whoami`
+   
+   if [ $user == deploy ]
+   	then
+   		echo "Hello,my name is $user"
+   	else
+   		echo "Sorry,my name is $user"
+   fi
+   
+   ip addr
+   
+   cat /etc/system-release
+   
+   free -m
+   
+   df -h
+   
+   py_cmd=`which python`
+   
+   $py_cmd --version
+   ~~~
+
+2. Jenkins参数集成
+
+   测试脚本
+
+   ~~~shell
+   #!/bin/sh
+   
+   echo "Current deploy enviromment is $deploy_env"
+   echo "The build is $version"
+   echo "The password is $pass"
+   
+   if $bool
+   then
+   	echo "Request is OK"
+   else
+   	echo "Request is deny"
+   fi
+   ~~~
+
+3. Jenkins git 集成
+
+   添加仓库地址及凭据
+
+4. Jenkins Maven集成
+
+   首先安装Maven
+
+   wget http://mirrors.hust.edu.cn/apache/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+
+   在Jenkins的Job构建中选择 “ 调用顶层Maven目标 ”，目标项为Maven命令，版本为下面所添加的
+
+   在构建maven项目之前，需要配置具体的JAVA_HOME和MAVEN_HOME路径，具体为：在Jenkins的全局工具配置中，新增JDK，maven，将对应的HOME输入，均取消自动安装

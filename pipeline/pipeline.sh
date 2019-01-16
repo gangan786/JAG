@@ -8,8 +8,8 @@ pipeline {
 	
 	parameters{
 		choice(
-			choices: 'dev\nprod'
-			description: 'choose deploy environment'
+			choices: 'dev\nprod',
+			description: 'choose deploy environment',
 			name: 'deploy_env'
 		)
 		string(name: 'version', defaultValue: '1.0.0', description: 'build version')
@@ -20,7 +20,7 @@ pipeline {
 			steps{
 				sh 'git config --global http.sslVerify false'
 				dir("${env.WORKSPACE}"){
-					git branch: 'master',credentialsId:"4a3648b1-ef2e-4cc3-8295-faed90aed85d",url:'https://root@gitlab.example.com/root/test-repo.git'
+					git branch: 'master',credentialsId:"4a3648b1-ef2e-4cc3-8295-faed90aed85d",url:'https://gitlab.example.com/root/test-repo.git'
 				}
 			}
 		}
@@ -36,7 +36,7 @@ pipeline {
 				}
 			}
 		}
-		stage(Check test propreties){
+		stage("Check test propreties"){
 			steps{
 				dir("${env.WORKSPACE}"){
 					sh """
